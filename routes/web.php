@@ -13,6 +13,7 @@ use App\Http\Controllers\ApiController;
 |
 */
 Route::get('/', [ApiController::class, 'getRecipes'])->name('recipes');
-//Route::get('/', function () {
-//    return view('index');
-//});
+
+Route::prefix('recipes')->group(function(){
+    Route::get('/details/{id}', [ApiController::class, 'detailsById'])->name('details');;
+});

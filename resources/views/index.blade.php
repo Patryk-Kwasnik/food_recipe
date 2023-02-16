@@ -7,6 +7,7 @@
         <!-- Fonts -->
         <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
         @vite('resources/css/app.css')
+        <script src="https://kit.fontawesome.com/1be28eb531.js" crossorigin="anonymous"></script>
     </head>
     <body class="antialiased">
     <section>
@@ -19,7 +20,15 @@
     </section>
     <div class="container mx-auto grid grid-cols-4 gap-4 justify-items-stretch">
         @foreach($results as $item)
-            <div class="justify-self-auto"><img class="max-w-full max-h-96 rounded" src="{{$item['thumbnail_url']}}" ></div>
+            <div class="justify-self-auto relative">
+                <a class="group/item hover:bg-slate-100" href=" {{ url('recipes/details/'.$item['id']) }}">
+                    <img class="max-w-full max-h-96 rounded" src="{{$item['thumbnail_url']}}" alt="{{$item['thumbnail_alt_text']}}">
+                    <div class="group/edit invisible hover:bg-slate-200 group-hover/item:visible">
+                        <span class=" absolute text-3xl text-amber-400 bottom-8 left-1/2 -translate-x-1/2">@if(isset($item['user_ratings']))<i class="fa-solid fa-star text-xs"></i>{{$item['user_ratings']['score']}}@endif</span>
+                    </div>
+                </a>
+                {{$item['name']}}
+            </div>
         @endforeach
     </div>
     </body>
