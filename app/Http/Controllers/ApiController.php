@@ -13,12 +13,13 @@ class ApiController extends Controller
 
     public function __construct($key=null, $host=null)
     {
-        $key?$this->key=$key:$this->key ='f0a873dce1mshf5c091d8ba87cc6p181c38jsn8c30914a55d0';
+        $key?$this->key=$key:$this->key ='577b6c72e9msh6f5736b6a332ce3p188086jsne65be91856fe';
         $host?$this->host=$host:$this->host ='tasty.p.rapidapi.com';
         $this->httpHeaders = Http::withHeaders([
             'X-RapidAPI-Key' => $this->key,
             'X-RapidAPI-Host' => $this->host
         ]);
+        session_start();
     }
     //pobranie przepisów - homepage
     public function getRecipes($limit=null, $offset=null)
@@ -40,14 +41,21 @@ class ApiController extends Controller
     //szególy - karta przepisu
     public function detailsById($id)
     {
-        try{
-            $response = $this->httpHeaders->get('https://tasty.p.rapidapi.com/recipes/get-more-info', ['id' => $id]);
-            $results = $response->json();
-
-            return view('recipes.details',compact('results'));
-        }catch(Exception  $e){
-            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        if (!isset($_SESSION['recipes'][$id])) {
+            try {die;
+                $response = $this->httpHeaders->get('https://tasty.p.rapidapi.com/recipes/get-more-info', ['id' => $id]);
+                $results = $response->json();
+                $_SESSION['recipes'][$results['id']] = $results;
+                return view('recipes.details', compact('results'));
+            } catch (Exception  $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
+            }
         }
+        else{
+            $results =  $_SESSION['recipes'][$id];
+            return view('recipes.details', compact('results'));
+        }
+
     }
 
 }
