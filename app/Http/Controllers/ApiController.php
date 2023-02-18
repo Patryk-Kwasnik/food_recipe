@@ -42,20 +42,29 @@ class ApiController extends Controller
     public function detailsById($id)
     {
         if (!isset($_SESSION['recipes'][$id])) {
-            try {die;
+            try {
                 $response = $this->httpHeaders->get('https://tasty.p.rapidapi.com/recipes/get-more-info', ['id' => $id]);
                 $results = $response->json();
                 $_SESSION['recipes'][$results['id']] = $results;
-                return view('recipes.details', compact('results'));
             } catch (Exception  $e) {
                 echo 'Caught exception: ', $e->getMessage(), "\n";
             }
-        }
-        else{
-            $results =  $_SESSION['recipes'][$id];
-            return view('recipes.details', compact('results'));
-        }
+            //podobne
+            try {
+                $response = $this->httpHeaders->get('https://tasty.p.rapidapi.com/recipes/list-similarities', ['recipe_id' => $id]);
+                $similarities = $response->json();
 
+                $_SESSION['recipes'][$results['id']]['similarities'] = $similarities;
+            } catch (Exception  $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
+            }
+            return view('recipes.details', compact('results', 'similarities'));
+        } else{
+            $results =  $_SESSION['recipes'][$id];
+            $similarities =  $_SESSION['recipes'][$id]['similarities'];
+
+            return view('recipes.details', compact('results','similarities'));
+        }
     }
 
 }
